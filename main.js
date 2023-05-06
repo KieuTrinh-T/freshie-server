@@ -12,6 +12,7 @@ const express = require('express');
 const app = express()
 const port = 3004
 var cors = require('cors');
+require('dotenv').config()
 
 // use it before all route definitions
 app.use(cors({ origin: 'http://localhost:4200' }));
@@ -32,7 +33,7 @@ app.use('/api/carts', cartRouter)
 mongoose.set('strictQuery', false);
 const connectDB = async() => {
         try {
-            await mongoose.connect(process.env.MONGODB_URI);
+            await mongoose.connect(uri);
             console.log('MongoDB is connected')
         } catch (err) {
             console.log(err)

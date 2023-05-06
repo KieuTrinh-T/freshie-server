@@ -23,13 +23,17 @@ const signUp = async(req) => {
             username: req.body.username,
             email: req.body.email,
             phone: req.body.phone,
-            isAdmin: req.body.isAdmin,
             street: req.body.street,
             apartment: req.body.apartment,
             zip: req.body.zip,
             city: req.body.city,
             country: req.body.country,
         })
+        if (req.body.isAdmin === "true") {
+            user.isAdmin = true;
+        } else {
+            user.isAdmin = false;
+        }
         user.setPassword(req.body.password);
         user = await user.save();
 
@@ -79,7 +83,7 @@ const getUserById = async(req) => {
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
         await client.connect();
         const collection = await client.db("cosmetic").collection("users");
-        const result = await collection.findOne({ _id: new ObjectId(req.params.id) })
+        const result = await collection.findOne({ _id: ObjectId(req.params.id) })
         await client.close()
         return convertObjectResult(result)
     } catch (err) {

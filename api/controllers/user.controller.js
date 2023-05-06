@@ -14,8 +14,6 @@ router
     .post('/signin', async(req, res) => {
         await signIn(req, res);
 
-
-
     })
     .get('/', async(req, res) => {
         const result = await filterUser(req)
