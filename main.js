@@ -32,7 +32,7 @@ app.use('/api/carts', cartRouter)
 mongoose.set('strictQuery', false);
 const connectDB = async() => {
         try {
-            await mongoose.connect(uri);
+            await mongoose.connect(process.env.MONGODB_URI);
             console.log('MongoDB is connected')
         } catch (err) {
             console.log(err)
