@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
+const MONGODB_URI = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
+
+// Connect to MongoDB
+mongoose.connect(MONGODB_URI, { dbName: 'cosmetic' });
+
 
 var UserSchema = mongoose.Schema({
     username: {
@@ -93,5 +98,5 @@ UserSchema.methods.validPassword = function(password) {
 };
 
 // Exporting module to allow it to be imported in other files
-var User = mongoose.model('User', UserSchema, 'users');
+var User = mongoose.model('User', UserSchema);
 module.exports = User;

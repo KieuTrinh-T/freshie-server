@@ -16,6 +16,7 @@ const signUp = async(req) => {
     mongoose.connection.on('connected', () => {
         console.log('Connected to MongoDB');
     });
+    const connection = mongoose.connection;
 
 
     try {
@@ -37,12 +38,14 @@ const signUp = async(req) => {
         user.setPassword(req.body.password);
         user = await user.save();
 
+        const result = await User.find({ username: req.body.username })
         return {
             status: 200,
             message: "Sign up successfully",
-            value: user
+            value: result
         }
     } catch (error) {
+        console.log(error)
         return error
     }
 
@@ -83,7 +86,7 @@ const getUserById = async(req) => {
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
         await client.connect();
         const collection = await client.db("cosmetic").collection("users");
-        const result = await collection.findOne({ _id: ObjectId(req.params.id) })
+        const result = await collection.findOne({ _id: new ObjectId(req.params.id) })
         await client.close()
         return convertObjectResult(result)
     } catch (err) {

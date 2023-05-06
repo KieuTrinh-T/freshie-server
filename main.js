@@ -13,7 +13,7 @@ const app = express()
 const port = 3004
 var cors = require('cors');
 require('dotenv').config()
-
+const MONGODB_URI = process.env.MONGODB_URI;
 // use it before all route definitions
 app.use(cors({ origin: 'http://localhost:4200' }));
 
@@ -24,6 +24,8 @@ const productRouter = require('./api/controllers/product.controller')
 const orderRouter = require('./api/controllers/order.controller')
 const userRouter = require('./api/controllers/user.controller')
 const cartRouter = require('./api/controllers/cart.controller')
+
+
 
 app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter)
