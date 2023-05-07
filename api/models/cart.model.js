@@ -56,14 +56,17 @@ const addToCart = async(req, res) => {
 
         if (cart) {
             //cart exists for user
-            let itemIndex = cart.cartItems.findIndex(p => p.product === productId)
+            cart.cartItems.forEach(element => {
+                console.log(element.product.toString(), element.product)
+            });
+            let itemIndex = cart.cartItems.findIndex(p => p.product.toString() === productId)
             if (itemIndex > -1) {
                 //product exists in the cart, update the quantity
                 console.log('product exists in the cart, update the quantity = ', quantity)
                 let productItem = cart.cartItems[itemIndex]
                 const product = await Product.findById(productId)
-                cart.subTotal += product.price * (quantity - productItem.quantity)
-                productItem.quantity = quantity
+                cart.subTotal += product.price * (quantity + productItem.quantity)
+                productItem.quantity = quantity + productItem.quantity
                 cart.cartItems[itemIndex] = productItem
 
             } else {
