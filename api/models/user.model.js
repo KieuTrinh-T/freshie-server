@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const mongoose = require('mongoose');
 
-const signUp = async(req) => {
+const signUp = async(req, res) => {
     // Mongodb connection url
     const MONGODB_URI = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
 
@@ -16,36 +16,42 @@ const signUp = async(req) => {
     mongoose.connection.on('connected', () => {
         console.log('Connected to MongoDB');
     });
-
-
     try {
         let user = new User({
             username: req.body.username,
             email: req.body.email,
             phone: req.body.phone,
+            isAdmin: req.body.isAdmin,
             street: req.body.street,
             apartment: req.body.apartment,
             zip: req.body.zip,
             city: req.body.city,
             country: req.body.country,
         })
-        if (req.body.isAdmin === "true") {
-            user.isAdmin = true;
-        } else {
-            user.isAdmin = false;
-        }
-        user.setPassword(req.body.password);
-        user = await user.save();
+        if (await User.findOne({ username: req.body.username })) {
+            return res.status(500).json({ message: "Username is already exist" })
+        } else if (await User.findOne({ email: req.body.email })) {
+            return res.status(500).json({ message: "Email is already exist" })
 
-        const result = await User.find({ username: req.body.username })
-        return {
-            status: 200,
-            message: "Sign up successfully",
-            value: result
+        } else {
+            user.setPassword(req.body.password);
+            user = await user.save();
+
+            if (req.body.isAdmin === "true") {
+                user.isAdmin = true;
+            } else {
+                user.isAdmin = false;
+            }
+            user.setPassword(req.body.password);
+            user = await user.save();
+
+            const result = await User.find({ username: req.body.username })
+            return res.status(200).json({ message: "Sign up successfully", value: result })
         }
+
     } catch (error) {
         console.log(error)
-        return error
+        return res.status(500).json({ message: "Sign up failed", value: error })
     }
 
 }
@@ -65,18 +71,20 @@ const signIn = async(req, res) => {
     const user = await User.findOne({ username: req.body.username })
     if (!user) {
         message = "Username is not correct";
-        res.status(500).json({ message: message });
+        return res.status(500).json({ message: message });
+
 
     }
     if (!user.validPassword(req.body.password)) {
         message = "Password is not correct";
-        res.status(500).json({ message: message });
+        return res.status(500).json({ message: message });
     } else if (user.validPassword(req.body.password)) {
         message = "Sign in successfully";
-        res.status(200).json({ message: message, value: user });
+        return res.status(200).json({ message: message, value: user });
     } else {
-        res.status(500).json({ message: message });
+        return res.status(500).json({ message: message });
     }
+
 }
 
 const getUserById = async(req) => {

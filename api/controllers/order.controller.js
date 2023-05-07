@@ -2,6 +2,7 @@
 
 const express = require('express')
 const { getAllOrder, viewOrderItems, postOrder, getOrderByUser, cancelOrder, updateOrder } = require('../models/order.model')
+
 const router = express.Router()
 router
     .get('/', async(req, res) => {
@@ -15,6 +16,13 @@ router
     .get('/:id', async(req, res) => {
         const result = await viewOrderItems(req)
         console.log(result)
+
+        res.status(200).json(result)
+    })
+    .post('/', async(req, res) => {
+        const result = await postOrder(req)
+        console.log(result)
+
         res.status(200).json(result)
     })
     .post('/', async(req, res) => {

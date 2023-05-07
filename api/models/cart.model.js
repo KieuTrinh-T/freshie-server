@@ -24,6 +24,7 @@ const getAllCart = async(req, res) => {
 }
 
 const loadCart = async(req, res) => {
+
     try {
         const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
         mongoose.connect(uri, { dbName: 'cosmetic' });
@@ -55,7 +56,7 @@ const addToCart = async(req, res) => {
 
         if (cart) {
             //cart exists for user
-            let itemIndex = cart.cartItems.findIndex(p => p.product._id.toString() === productId.toString())
+            let itemIndex = cart.cartItems.findIndex(p => p.product === productId)
             if (itemIndex > -1) {
                 //product exists in the cart, update the quantity
                 console.log('product exists in the cart, update the quantity = ', quantity)
@@ -83,7 +84,6 @@ const addToCart = async(req, res) => {
                 user_id: req.params.user_id,
                 cartItems: [{ product: productId, quantity }],
             })
-            cart.countSubTotal()
             return res.status(201).send(newCart)
         }
 
@@ -118,9 +118,6 @@ const removeFromCart = async(req, res) => {
         return res.status(500).send(err.message)
     }
 }
-
-
-
 module.exports = {
     loadCart,
     addToCart,

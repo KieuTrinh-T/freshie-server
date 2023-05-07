@@ -8,12 +8,10 @@ const { signUp, signIn, getUserById, filterUser, updateUser } = require('../mode
 
 router
     .post('/signup', async(req, res) => {
-        const result = await signUp(req)
-        res.status(200).json(result)
+        await signUp(req, res)
     })
     .post('/signin', async(req, res) => {
         await signIn(req, res);
-
     })
     .get('/', async(req, res) => {
         const result = await filterUser(req)

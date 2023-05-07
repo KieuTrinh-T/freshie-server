@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Product = require('../schema/product.schema');
 
 
+
 const getAllProducts = async(req, res) => {
     try {
         const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
