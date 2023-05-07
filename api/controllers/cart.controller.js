@@ -2,7 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
-const { loadCart, addToCart, getAllCart, removeFromCart } = require('../models/cart.model')
+const { loadCart, addToCart, getAllCart, removeFromCart, getRecentCart } = require('../models/cart.model')
 
 router
     .get('/', async(req, res) => {

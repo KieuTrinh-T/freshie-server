@@ -56,7 +56,7 @@ var UserSchema = mongoose.Schema({
         default: true,
     }
 
-});
+}, { timestamps: true });
 
 UserSchema.virtual('id').get(function() {
     return this._id.toHexString();
