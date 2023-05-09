@@ -65,7 +65,7 @@ const viewOrderItems = async(req, res) => {
                 select: { 'product_name': 1, 'price': 1, 'original_price': 1, 'thumb': 1 }
             }
         }).populate('user', 'phone ')
-        return res.status(200).json(order)
+        return res.status(200).json(convertObjectResult(order))
 
     } catch (err) {
         return res.status(500).json(err)
