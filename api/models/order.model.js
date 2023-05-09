@@ -1,4 +1,4 @@
-const { convertArrayResult } = require('../../utils/function');
+const { convertArrayResult, convertObjectResult } = require('../../utils/function');
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const Order = require('../schema/order.schema');
@@ -7,7 +7,7 @@ require('../schema/product.schema')
 
 const mongoose = require('mongoose');
 
-const getAllOrder = async(req) => {
+const getAllOrder = async(req, res) => {
     try {
         const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -29,29 +29,29 @@ const getAllOrder = async(req) => {
         console.log(query)
         const result = await collection.find(query).sort({ 'dateOrdered': -1 }).toArray();
         await client.close()
-        return convertArrayResult(result)
+        return res.status(200).json(convertArrayResult(result))
     } catch (err) {
-        return err
+        return res.status(500).json(err)
     }
 
 }
 
 
-const getOrderByUser = async(req) => {
+const getOrderByUser = async(req, res) => {
     try {
         const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
         mongoose.connect(uri, { dbName: 'cosmetic' });
         mongoose.connection.on('connected', () => {
             console.log('Mess from View: Connected to MongoDB');
         });
-        const user_id = req.params.user_id
+        const user_id = req.params.id
         const result = await Order.find({ user: user_id })
-        return convertArrayResult(result)
+        return res.status(200).json(result)
     } catch (err) {
-        return err
+        return res.status(500).json(err)
     }
 }
-const viewOrderItems = async(req) => {
+const viewOrderItems = async(req, res) => {
     try {
         const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
         mongoose.connect(uri, { dbName: 'cosmetic' });
@@ -64,15 +64,14 @@ const viewOrderItems = async(req) => {
                 path: 'product',
                 select: { 'product_name': 1, 'price': 1, 'original_price': 1, 'thumb': 1 }
             }
-        })
-        console.log(req.params.id)
-        return order
+        }).populate('user', 'phone ')
+        return res.status(200).json(order)
 
     } catch (err) {
-        return err
+        return res.status(500).json(err)
     }
 }
-const postOrder = async(req) => {
+const postOrder = async(req, res) => {
     try {
         // Mongodb connection url
         const MONGODB_URI = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
@@ -111,9 +110,9 @@ const postOrder = async(req) => {
             user: req.body.user,
         })
         order = await order.save();
-        return order
+        return res.status(200).json(convertObjectResult(order));
     } catch (err) {
-        return err
+        return res.status(500).json(err)
     }
 }
 const cancelOrder = async(req, res) => {

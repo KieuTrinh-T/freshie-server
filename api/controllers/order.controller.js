@@ -6,29 +6,19 @@ const { getAllOrder, viewOrderItems, postOrder, getOrderByUser, cancelOrder, upd
 const router = express.Router()
 router
     .get('/', async(req, res) => {
-        const result = await getAllOrder(req)
-        res.status(200).json(result)
+        await getAllOrder(req, res)
     })
-    .get('/:user_id', async(req, res) => {
-        const result = await getOrderByUser(req)
-        res.status(200).json(result)
+    .get('/user/:id', async(req, res) => {
+        await getOrderByUser(req, res)
+
     })
     .get('/:id', async(req, res) => {
-        const result = await viewOrderItems(req)
-        console.log(result)
+        await viewOrderItems(req, res)
 
-        res.status(200).json(result)
     })
     .post('/', async(req, res) => {
-        const result = await postOrder(req)
-        console.log(result)
+        await postOrder(req, res)
 
-        res.status(200).json(result)
-    })
-    .post('/', async(req, res) => {
-        const result = await postOrder(req)
-        console.log(result)
-        res.status(200).json(result)
     })
     .put('/:id/cancel', async(req, res) => {
         await cancelOrder(req, res)
