@@ -22,8 +22,7 @@ router
         res.send(result)
     })
     .put('/:id', async(req, res) => {
-        const result = await updateUser(req)
-        res.send(result)
+        await updateUser(req, res)
     })
 
 
