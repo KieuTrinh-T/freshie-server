@@ -26,6 +26,13 @@ const getAllOrder = async(req, res) => {
             }
             delete query.day
         }
+        if (req.query.user) {
+            query = {
+                ...query,
+                user: new ObjectId(req.query.user)
+            }
+            delete query.user
+        }
         console.log(query)
         const result = await collection.find(query).sort({ 'dateOrdered': -1 }).toArray();
         await client.close()
