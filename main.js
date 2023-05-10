@@ -25,6 +25,12 @@ const orderRouter = require('./api/controllers/order.controller')
 const userRouter = require('./api/controllers/user.controller')
 const cartRouter = require('./api/controllers/cart.controller')
 
+app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next()
+});
+
 app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter)
 app.use('/api/users', userRouter)
