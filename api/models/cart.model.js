@@ -54,7 +54,6 @@ const addToCart = async(req, res) => {
             console.log('Mess from View: Connected to MongoDB');
         });
         var cart = await Cart.findOne({ user_id: req.params.user_id })
-
         if (cart) {
             //cart exists for user
             cart.cartItems.forEach(element => {
