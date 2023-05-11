@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Cart = require('../schema/cart.schema');
 const Product = require('../schema/product.schema');
+const e = require('express');
 
 const getAllCart = async(req, res) => {
     try {
@@ -31,7 +32,7 @@ const loadCart = async(req, res) => {
         mongoose.connection.on('connected', () => {
             console.log('Mess from View: Connected to MongoDB');
         });
-        const cart = await Cart.findOne({ user_id: req.params.user_id }).populate({
+        const cart = await Cart.findOne({ user_id: req.params.user_id, "cartItems.quantity": { $gt: 0 } }).populate({
             path: 'cartItems',
             populate: {
                 path: 'product',
@@ -52,7 +53,7 @@ const addToCart = async(req, res) => {
         mongoose.connection.on('connected', () => {
             console.log('Mess from View: Connected to MongoDB');
         });
-        var cart = await Cart.findOne({ user_id: req.params.user_id })
+        var cart = await Cart.findById(req.params.id)
 
         if (cart) {
             //cart exists for user
@@ -95,28 +96,49 @@ const addToCart = async(req, res) => {
     }
 }
 const removeFromCart = async(req, res) => {
-    const product_id = req.body.product_id
     try {
         const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
         mongoose.connect(uri, { dbName: 'cosmetic' });
         mongoose.connection.on('connected', () => {
             console.log('Mess from View: Connected to MongoDB');
         });
-        var cart = await Cart.findOne({ user_id: req.params.user_id })
+        if (req.body.cartItemId) {
+            await emptyCart(req, res)
+        } else {
+            const cartItemId = req.body.cartItemId
+            var cart = await Cart.findById(req.params.id)
+            if (!cart) {
+                return res.status(404).send('Cart not found')
+            } else {
+                if (!cart.cartItems.find(p => p._id.toString() === cartItemId)) {
+                    return res.status(404).send('Product not found in cart')
+                } else {
+                    cart.cartItems = cart.cartItems.filter(p => p._id.toString() !== cartItemId)
+                    const product = await Product.findById(req.body.product_id)
+                    cart.subTotal -= product.price * req.body.quantity
+                    cart = await cart.save()
+                    return res.status(200).send(cart)
+                }
+            }
+        }
+    } catch (err) {
+        return res.status(500).send(err)
+    }
+
+}
+const emptyCart = async(req, res) => {
+    try {
+        const uri = "mongodb+srv://trinhttk20411c:tun4eK0KBEnRlL4T@cluster0.amr5r35.mongodb.net/?retryWrites=true&w=majority";
+        mongoose.connect(uri, { dbName: 'cosmetic' });
+        mongoose.connection.on('connected', () => {
+            console.log('Mess from View: Connected to MongoDB');
+        });
+        const cart = await Cart.findByIdAndUpdate(req.params.id, { cartItems: [] })
         if (!cart) {
             return res.status(404).send('Cart not found')
         } else {
-            if (cart.cartItems.findIndex(p => p.product._id.toString() === product_id.toString()) === -1) {
-                return res.status(404).send('Product not found in cart')
-            } else {
-                const product = await Product.findById(product_id)
-                cart.subTotal -= product.price * cart.cartItems.find(p => p.product._id.toString() === product_id.toString()).quantity
-                cart.cartItems = cart.cartItems.filter(p => p.product._id.toString() !== product_id.toString())
-                cart = await cart.save()
-                return res.status(201).send(cart)
-            }
+            return res.status(200).send('Cart deleted')
         }
-
     } catch (err) {
         return res.status(500).send(err.message)
     }
@@ -125,5 +147,6 @@ module.exports = {
     loadCart,
     addToCart,
     getAllCart,
-    removeFromCart
+    removeFromCart,
+    emptyCart
 }
