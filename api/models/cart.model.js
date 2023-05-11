@@ -53,7 +53,7 @@ const addToCart = async(req, res) => {
         mongoose.connection.on('connected', () => {
             console.log('Mess from View: Connected to MongoDB');
         });
-        var cart = await Cart.findById(req.params.id)
+        var cart = await Cart.findOne({ user_id: req.params.user_id })
 
         if (cart) {
             //cart exists for user

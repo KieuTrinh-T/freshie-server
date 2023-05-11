@@ -11,7 +11,7 @@ router
     .get('/:user_id', async(req, res) => {
         await loadCart(req, res)
     })
-    .post('/:id', async(req, res) => {
+    .post('/:user_id', async(req, res) => {
         await addToCart(req, res)
     })
     .delete('/:id', async(req, res) => {
