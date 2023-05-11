@@ -9,6 +9,9 @@ const orderSchema = mongoose.Schema({
         ref: 'OrderItem',
         required: true
     }],
+    recipientName: {
+        type: String,
+    },
     shippingAddress1: {
         type: String,
         required: true,
@@ -22,7 +25,6 @@ const orderSchema = mongoose.Schema({
     },
     country: {
         type: String,
-        required: true,
     },
 
     phone: {

@@ -104,6 +104,7 @@ const postOrder = async(req, res) => {
         }))
         let order = new Order({
             orderItems: orderItemsIdsResolved,
+            recipientName: req.body.recipientName,
             shippingAddress1: req.body.shippingAddress1,
             shippingAddress2: req.body.shippingAddress2,
             city: req.body.city,

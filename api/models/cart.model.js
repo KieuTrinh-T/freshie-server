@@ -39,17 +39,18 @@ const loadCart = async(req, res) => {
                 select: { 'product_name': 1, 'price': 1, 'original_price': 1, 'thumb': 1 }
             }
         })
-        console.log(cart.cartItems)
 
-        console.log(req.body.cartItems)
-        if (req.body.cartItems.length > 0) {
+        if (req.body.cartItems) {
             let result = cart.cartItems.filter(item => {
                 return req.body.cartItems.indexOf(item._id.toString()) != -1
             })
             console.log(result)
             return res.status(200).json(result)
+        } else {
+            console.log(cart)
+            return res.status(200).json(cart)
+
         }
-        return res.status(200).json(cart)
     } catch (err) {
         return res.status(500).json(err)
     }
