@@ -15,6 +15,7 @@ router
         await addToCart(req, res)
     })
     .put('/:user_id', async(req, res) => {
+
         await removeFromCart(req, res)
     })
 
