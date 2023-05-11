@@ -32,13 +32,23 @@ const loadCart = async(req, res) => {
         mongoose.connection.on('connected', () => {
             console.log('Mess from View: Connected to MongoDB');
         });
-        const cart = await Cart.findOne({ user_id: req.params.user_id, "cartItems.quantity": { $gt: 0 } }).populate({
+        const cart = await Cart.findOne({ user_id: req.params.user_id }).populate({
             path: 'cartItems',
             populate: {
                 path: 'product',
                 select: { 'product_name': 1, 'price': 1, 'original_price': 1, 'thumb': 1 }
             }
         })
+        console.log(cart.cartItems)
+
+        console.log(req.body.cartItems)
+        if (req.body.cartItems.length > 0) {
+            let result = cart.cartItems.filter(item => {
+                return req.body.cartItems.indexOf(item._id.toString()) != -1
+            })
+            console.log(result)
+            return res.status(200).json(result)
+        }
         return res.status(200).json(cart)
     } catch (err) {
         return res.status(500).json(err)
