@@ -3,6 +3,7 @@ const { convertArrayResult, convertObjectResult } = require('../../utils/functio
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const Order = require('../schema/order.schema');
 const OrderItem = require('../schema/order-item.schema');
+const Cart = require('../schema/cart.schema');
 require('../schema/product.schema')
 
 const mongoose = require('mongoose');
@@ -118,6 +119,9 @@ const postOrder = async(req, res) => {
             user: req.body.user,
         })
         order = await order.save();
+        const cart = await Cart.findOne({ user_id: req.body.user });
+        cart.CartItems = cart.CartItems.filter(item => !orderItemsIdsResolved.includes(item._id));
+        cart.save();
         return res.status(200).json(convertObjectResult(order));
     } catch (err) {
         return res.status(500).json(err)
