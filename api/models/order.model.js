@@ -118,12 +118,16 @@ const postOrder = async(req, res) => {
             total: totalPrices.reduce((a, b) => a + b, 0) + req.body.shipping + req.body.tax,
             user: req.body.user,
         })
-        order = await order.save();
         const cart = await Cart.findOne({ user_id: req.body.user });
-        cart.CartItems = cart.CartItems.filter(item => !orderItemsIdsResolved.includes(item._id));
-        cart.save();
+        const to_delete = req.body.orderItems.map(orderItem => orderItem.product)
+        cart.cartItems = cart.cartItems.filter(item => {
+            return to_delete.indexOf(item.product.toString()) === -1
+        })
+        await cart.save()
+        order = await order.save();
         return res.status(200).json(convertObjectResult(order));
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }
