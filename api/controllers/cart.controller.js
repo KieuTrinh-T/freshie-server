@@ -14,7 +14,7 @@ router
     .post('/:user_id', async(req, res) => {
         await addToCart(req, res)
     })
-    .delete('/:id', async(req, res) => {
+    .delete('/:user_id', async(req, res) => {
         await removeFromCart(req, res)
     })
 

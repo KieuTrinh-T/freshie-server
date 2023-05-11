@@ -116,7 +116,7 @@ const removeFromCart = async(req, res) => {
             await emptyCart(req, res)
         } else {
             const cartItemId = req.body.cartItemId
-            var cart = await Cart.findById(req.params.id)
+            var cart = await Cart.findOne({ user_id: req.params.user_id })
             if (!cart) {
                 return res.status(404).send('Cart not found')
             } else {
