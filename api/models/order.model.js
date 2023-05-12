@@ -28,11 +28,12 @@ const getAllOrder = async(req, res) => {
             delete query.day
         }
         if (req.query.user) {
+            delete query.user
             query = {
                 ...query,
                 user: new ObjectId(req.query.user)
             }
-            delete query.user
+
         }
         console.log(query)
         const result = await collection.find(query).sort({ 'dateOrdered': -1 }).toArray();
@@ -59,7 +60,8 @@ const getOrderByUser = async(req, res) => {
                 path: 'product',
                 select: { 'product_name': 1, 'price': 1, 'original_price': 1, 'thumb': 1 }
             }
-        }).sort({ 'dateOrdered': -1
+        }).sort({
+            'dateOrdered': -1
         })
         return res.status(200).json(convertArrayResult(result))
     } catch (err) {
