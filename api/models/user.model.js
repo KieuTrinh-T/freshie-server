@@ -155,10 +155,12 @@ const updateUser = async(req, res) => {
                 is_active: req.body.is_active
             }
         })
-        let updated = new User(await User.findOne({ _id: new ObjectId(req.params.id) }))
+        if(req.body.password){
+            let updated = new User(await User.findOne({ _id: new ObjectId(req.params.id) }))
         updated.setPassword(req.body.password);
-        updated = await updated.save();
+        updated = await updated.save();}
         const user = await User.findOne({ _id: new ObjectId(req.params.id) })
+        console.log(user)
         return res.status(200).json({ message: "Update successfully", value: user })
     } catch (err) {
         console.log(err)
