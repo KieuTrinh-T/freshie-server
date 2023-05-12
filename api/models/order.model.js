@@ -1,6 +1,7 @@
 const { convertArrayResult, convertObjectResult } = require('../../utils/function');
 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 const Order = require('../schema/order.schema');
 const OrderItem = require('../schema/order-item.schema');
 const Cart = require('../schema/cart.schema');
@@ -31,9 +32,8 @@ const getAllOrder = async(req, res) => {
             delete query.user
             query = {
                 ...query,
-                user: new ObjectId(req.query.user)
+                user: ObjectId(req.query.user)
             }
-
         }
         console.log(query)
         const result = await collection.find(query).sort({ 'dateOrdered': -1 }).toArray();
