@@ -15,7 +15,19 @@ var cors = require('cors');
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI;
 // use it before all route definitions
-app.use(cors({ origin: 'http://localhost:4200' }));
+// app.use(cors({ origin: 'http://localhost:4200' }));
+const allowedOrigins = ['http://localhost:4200', 'https://freshie-server-mqt8rgu0d-kieutrinh-t.vercel.app/'];
+
+app.use(cors({
+    origin: function(origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
+}));
 
 const bodyParser = require("body-parser")
 app.use(bodyParser.json())
