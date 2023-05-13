@@ -98,7 +98,7 @@ const filterProduct = async(req, res) => {
             filter = {
                 ...filter,
                 product_name: {
-                    $regex: search,
+                    $regex: new RegExp(search, 'i'),
                 }
             }
         }
@@ -207,14 +207,17 @@ const filterProduct = async(req, res) => {
             category_name: 0,
             inventory_num: 1
         };
+        console.log(filter)
         const result = await collection.find(filter, projection)
             .sort(sortBy)
             .limit(limit)
             .skip((page - 1) * limit)
             .toArray()
         client.close()
+        console.log(result)
         return res.status(200).json(convertArrayResult(result))
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 
